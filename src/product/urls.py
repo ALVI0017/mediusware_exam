@@ -22,8 +22,18 @@
 from django.urls import path
 from django.views.generic import TemplateView
 
-from product.views.product import CreateProductView,ProductListView
+from product.views.product import CreateProductView,ProductListView,ProductViewSet
 from product.views.variant import VariantView, VariantCreateView, VariantEditView
+from rest_framework import routers
+
+# 
+router = routers.DefaultRouter()
+
+router.register('product',ProductViewSet)
+
+
+
+
 
 app_name = "product"
 
@@ -39,4 +49,4 @@ urlpatterns = [
     #     'product': True
     # }), name='list.product'),
      path('list/', ProductListView.as_view(template_name='products/list.html'), name='list.product'),
-]
+]+ router.urls

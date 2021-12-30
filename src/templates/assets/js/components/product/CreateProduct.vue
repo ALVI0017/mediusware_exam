@@ -1,5 +1,6 @@
 <template>
   <section>
+    <h1>asdasd</h1>
     <div class="row">
       <div class="col-md-6">
         <div class="card shadow mb-4">
@@ -163,7 +164,7 @@
     </div>
 
     <button @click="saveProduct" type="submit" class="btn btn-lg btn-primary">
-      Save
+      Ssave
     </button>
     <button type="button" class="btn btn-secondary btn-lg">Cancel</button>
   </section>
@@ -174,6 +175,7 @@ import vue2Dropzone from "vue2-dropzone";
 import "vue2-dropzone/dist/vue2Dropzone.min.css";
 import InputTag from "vue-input-tag";
 
+console.log("hello");
 export default {
   components: {
     vueDropzone: vue2Dropzone,
@@ -253,18 +255,40 @@ export default {
     },
 
     // store product into database
+
+    // async saveProduct() {
+    //   // await this.getStudent();
+    //   let product = {
+    //     title: this.product_name,
+    //     sku: this.product_sku,
+    //     description: this.description,
+    //     // product_image: this.images,
+    //     // product_variant: this.product_variant,
+    //     // product_variant_prices: this.product_variant_prices,
+    //   };
+
+    //   await fetch("http://127.0.0.1:8000/product/product/", {
+    //     method: "post",
+    //     headers: {
+    //       "Content-Type": "application/json",
+    //     },
+    //     body: JSON.stringify(product),
+    //   });
+    //   // await this.getStudent();
+    // },
+
     saveProduct() {
       let product = {
         title: this.product_name,
         sku: this.product_sku,
         description: this.description,
-        product_image: this.images,
-        product_variant: this.product_variant,
-        product_variant_prices: this.product_variant_prices,
+        // product_image: this.images,
+        // product_variant: this.product_variant,
+        // product_variant_prices: this.product_variant_prices,
       };
 
       axios
-        .post("/product", product)
+        .post("http://127.0.0.1:8000/product/product/", product)
         .then((response) => {
           console.log(response.data);
         })

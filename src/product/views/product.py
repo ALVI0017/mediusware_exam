@@ -17,32 +17,51 @@ from django.views import generic
 from django.views.generic import ListView, CreateView
 
 from product.models import Variant,Product,ProductVariantPrice,ProductVariant
+from product.serializer import productSerializer
 from product.views.variant import BaseVariantView
 from product.forms import ProductForm
 from django.db.models import Q
 
+from rest_framework.viewsets import ModelViewSet
+
+from product.forms import *
+
+from django.shortcuts import HttpResponseRedirect
 
 
 
-
-
-
-
-
-
+class ProductViewSet(ModelViewSet):
+    queryset = Product.objects.all()
+    serializer_class = productSerializer
 
 class CreateProductView(generic.TemplateView):
   
     template_name = 'products/create.html'
 
+    
+    
+    
     def get_context_data(self, **kwargs):
         context = super(CreateProductView, self).get_context_data(**kwargs)
         variants = Variant.objects.filter(active=True).values('id', 'title')
+        form1 = ProductForm()
+        # form2 = ProductVariantForm()
         context['product'] = True
         context['variants'] = list(variants.all())
+        context['form'] = form1
         return context
 
-   
+    def post(self,request):
+        form1= ProductForm(request.POST)
+        
+        if form1.is_valid():
+            title  = form1.cleaned_data['title']
+            sku  = form1.cleaned_data['sku']
+            description  = form1.cleaned_data['description']
+            
+            product = Product(title=title,sku=sku,description=description)
+            product.save()
+            return HttpResponseRedirect('/')
 
 class VariantCreateView(CreateProductView, CreateView):
     pass

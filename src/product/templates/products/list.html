@@ -1,7 +1,15 @@
 {% extends 'backend/base.html' %}
 
-{% block title %} Product List {% endblock %}
 
+
+{% block title %} Product List {% endblock %}
+{% block cssstyle %} <style>
+    .pagination {
+        display: flex;
+        justify-content: space-between;
+    }
+
+</style>{% endblock %}
 {% block content %}
 
 <div class="d-sm-flex align-items-center justify-content-between mb-4">
@@ -10,30 +18,55 @@
 
 
 <div class="card">
-    <form action="" method="get" class="card-header">
+    <form action="?" method="get" class="card-header py-3">
+
+        <div class="form-row">
+            <div class="col-md-3">
+                <input type="text" name="title__icontains" value="" placeholder="Serch" class="form-control">
+
+            </div>
+            {{my_filter.form}}
+
+            <div class="col-md-1">
+                <button class="btn btn-primary">Search</button>
+            </div>
+        </div>
+    </form>
+    <form action="?" method="get" class="card-header">
         <div class="form-row justify-content-between">
             <div class="col-md-2">
-                <input type="text" name="title" placeholder="Product Title" class="form-control">
+                <input type="text" name="title" placeholder="Product Title" class="form-control" value="{{title}}">
             </div>
+
             <div class="col-md-2">
-                <select name="variant" id="" class="form-control">
-                    <option selected disabled>--Select A Variant--</option>
+                <select name="variant" id="variant" class="form-control">
+                    <option value="">All</option>
+                    {% for main_var in main_variant %}
+
+                    <optgroup label="{{main_var.title}}">
+                        {% for var in allvariants %}
+                        {% if var.variant.id == main_var.id %}
+                        <option value='{{var.id}}' name="variant">{{var.variant_title}}</option>
+                        {% endif %}
+                        {% endfor %}
+                    </optgroup>
+                    {% endfor %}
 
                 </select>
             </div>
-
             <div class="col-md-3">
                 <div class="input-group">
                     <div class="input-group-prepend">
                         <span class="input-group-text">Price Range</span>
                     </div>
                     <input type="text" name="price_from" aria-label="First name" placeholder="From"
-                           class="form-control">
-                    <input type="text" name="price_to" aria-label="Last name" placeholder="To" class="form-control">
+                        value="{{price_from}}" class="form-control">
+                    <input type="text" name="price_to" aria-label="Last name" placeholder="To" class="form-control"
+                        value="{{price_to}}">
                 </div>
             </div>
             <div class="col-md-2">
-                <input type="date" name="date" placeholder="Date" class="form-control">
+                <input type="date" name="date" placeholder="Date" value="{{date}}" class="form-control">
             </div>
             <div class="col-md-1">
                 <button type="submit" class="btn btn-primary float-right"><i class="fa fa-search"></i></button>
@@ -41,46 +74,76 @@
         </div>
     </form>
 
+
+
+
+
     <div class="card-body">
         <div class="table-response">
             <table class="table">
                 <thead>
-                <tr>
-                    <th>#</th>
-                    <th>Title</th>
-                    <th>Description</th>
-                    <th>Variant</th>
-                    <th width="150px">Action</th>
-                </tr>
+                    <tr>
+                        <th>#</th>
+                        <th>Title</th>
+                        <th>Description</th>
+                        <th>Variant</th>
+                        <th width="150px">Action</th>
+                    </tr>
                 </thead>
 
                 <tbody>
-                <tr>
-                    <td>1</td>
-                    <td>T-Shirt <br> Created at : 25-Aug-2020</td>
-                    <td>Quality product in low cost</td>
-                    <td>
-                        <dl class="row mb-0" style="height: 80px; overflow: hidden" id="variant">
 
-                            <dt class="col-sm-3 pb-0">
-                                SM/ Red/ V-Nick
-                            </dt>
-                            <dd class="col-sm-9">
-                                <dl class="row mb-0">
-                                    <dt class="col-sm-4 pb-0">Price : 200.0</dt>
-                                    <dd class="col-sm-8 pb-0">InStock : 50.</dd>
-                                </dl>
-                            </dd>
-                        </dl>
-                        <button onclick="$('#variant').toggleClass('h-auto')" class="btn btn-sm btn-link">Show more
-                        </button>
-                    </td>
-                    <td>
-                        <div class="btn-group btn-group-sm">
-                            <a href="" class="btn btn-success">Edit</a>
-                        </div>
-                    </td>
-                </tr>
+
+
+                    {% for product in products %}
+                    <tr>
+                        <td>{{forloop.counter}}
+                        </td>
+                        <td style="width:180px">{{ product.title }} <br> {{ product.created_at | timesince }} ago</td>
+                        <td style="width:270px">{{ product.description }}</td>
+
+                        <td>
+                            {% for var in variants %}
+
+
+
+
+                            {%if product.id == var.product.id %}
+                            <dl class="row mb-0" style="height: 80px; overflow: hidden" id="variant">
+
+                                <dt class="col-sm-3 pb-0">
+                                    {{ var.product_variant_one.variant_title }} /
+                                    {{ var.product_variant_two.variant_title}}/
+                                    {{ var.product_variant_three.variant_title }}
+                                </dt>
+                                <dd class="col-sm-9">
+                                    <dl class="row mb-0">
+                                        <dt class="col-sm-4 pb-0">Price : {{var.price}}</dt>
+                                        <dd class="col-sm-8 pb-0">InStock :{{var.stock}}</dd>
+                                    </dl>
+                                </dd>
+                            </dl>
+
+
+                            {% endif %}
+
+
+                            {% endfor %}
+                            <br><button onclick="$('#variant{{inner_counter}}').toggleClass('h-auto')"
+                                class="btn btn-sm btn-link">Show more
+                            </button>
+
+                        </td>
+
+                        <td>
+                            <div class="btn-group btn-group-sm">
+                                <a href="" class="btn btn-success">Edit</a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+
+
                 </tbody>
 
             </table>
@@ -89,12 +152,57 @@
     </div>
 
     <div class="card-footer">
-        <div class="row justify-content-between">
-            <div class="col-md-6">
-                <p>Showing 1 to 10 out of 100</p>
-            </div>
-            <div class="col-md-2">
+        <div class="pagination">
+            <span class="page-links">
+                <div class="left">
 
+                    <span class="page-current">
+                        showing {{ page_obj.start_index}} to {{ page_obj.end_index}} out of
+                        {{ page_obj.paginator.count }}
+                    </span>
+
+                </div>
+
+
+
+            </span>
+            <div class="right">
+                <ul class="pagination justify-content-center">
+                    {% if page_obj.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.previous_page_number }}"><i
+                                class="fa fa-angle-left" aria-hidden="true"></i></a>
+                    </li>
+                    {% else %}
+                    <li class="page-item disabled">
+                        <a class="page-link" href="#" tabindex="-1" aria-disabled="True"><i class="fa fa-angle-left"
+                                aria-hidden="true"></i></a>
+                    </li>
+                    {% endif %}
+                    {% for i in page_obj.paginator.page_range %}
+                    {% if page_obj.number == i %}
+                    <li class="page-item active" aria-current="page">
+                        <span class="page-link">
+                            {{ i }}
+                            <span class="sr-only">(current)</span>
+                        </span>
+                    </li>
+                    {% else %}
+                    <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+                    {% endif %}
+                    {% endfor %}
+                    {% if page_obj.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.next_page_number }}"><i class="fa fa-angle-right"
+                                aria-hidden="true"></i></a>
+                    </li>
+                    {% else %}
+                    <li class="page-item disabled">
+                        <a class="page-link" href="#" tabindex="-1" aria-disabled="True"><i class="fa fa-angle-right"
+                                aria-hidden="true"></i></a>
+                    </li>
+                    {% endif %}
+                </ul>
             </div>
         </div>
     </div>
